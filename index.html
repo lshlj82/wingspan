@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>윙스팬 규칙 배우기 — 직접 해 보는 한글 가이드</title>
+<script>try{var t=localStorage.getItem('ws-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF1E7; --surface:#F8FAF4; --surface2:#E2E8DA; --ink:#1E2F2A; --muted:#566760; --line:#C5CFBF;
+  --forest:#3E6B3F; --forest-bg:#DDE9D8; --grass:#9C7613; --grass-bg:#F1E7C6; --wet:#2D6A8A; --wet-bg:#D5E6EE;
+  --egg:#7FBDB4; --brown:#7A4F2C; --brown-bg:#EBDCCB; --pink:#B44A74; --pink-bg:#F3DCE6; --focus:#2D6A8A;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131B18; --surface:#1B2521; --surface2:#24302B; --ink:#E3EAE2; --muted:#9BABA2; --line:#34443D;
+    --forest:#86BA80; --forest-bg:#1F3022; --grass:#E1BB52; --grass-bg:#332B14; --wet:#74B6D6; --wet-bg:#16303C;
+    --egg:#8FD0C6; --brown:#D9A777; --brown-bg:#382A1E; --pink:#E58AAE; --pink-bg:#3A2330; --focus:#74B6D6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131B18; --surface:#1B2521; --surface2:#24302B; --ink:#E3EAE2; --muted:#9BABA2; --line:#34443D;
+  --forest:#86BA80; --forest-bg:#1F3022; --grass:#E1BB52; --grass-bg:#332B14; --wet:#74B6D6; --wet-bg:#16303C;
+  --egg:#8FD0C6; --brown:#D9A777; --brown-bg:#382A1E; --pink:#E58AAE; --pink-bg:#3A2330; --focus:#74B6D6;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Gowun Dodum","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:17px;line-height:1.7;word-break:keep-all}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+h1,h2,h3{font-family:"Gowun Batang","Nanum Myeongjo","AppleMyungjo",serif;font-weight:700;line-height:1.3;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+.prose{max-width:38em}
+
+/* nav */
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+nav.top a{flex:none;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:999px;font-size:15px}
+nav.top a:hover{background:var(--surface2);color:var(--ink)}
+.theme-btn{flex:none;margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:14px;cursor:pointer}
+.theme-btn:hover{border-color:var(--ink)}
+.credit{margin-top:10px;color:var(--ink)}
+
+/* hero */
+header.hero{padding:64px 0 40px}
+.hero h1{font-size:clamp(44px,8vw,88px);letter-spacing:-0.02em;line-height:1.05}
+.hero h1 small{display:block;font-size:.36em;font-weight:400;color:var(--muted);letter-spacing:0;margin-top:14px}
+.hero p{max-width:34em;font-size:19px;margin:22px 0 0}
+.habstrip{display:flex;margin-top:36px;border-radius:14px;overflow:hidden;max-width:620px}
+.habstrip div{flex:1;padding:14px 16px;font-size:15px}
+.habstrip b{display:block;font-family:"Gowun Batang",serif;font-size:20px}
+.h-forest{background:var(--forest-bg)} .h-forest b{color:var(--forest)}
+.h-grass{background:var(--grass-bg)} .h-grass b{color:var(--grass)}
+.h-wet{background:var(--wet-bg)} .h-wet b{color:var(--wet)}
+
+section{padding:56px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(28px,4vw,38px);margin-bottom:6px}
+section h2 .n{font-family:"Gowun Dodum",sans-serif;font-size:.5em;color:var(--muted);vertical-align:middle;margin-right:10px;font-weight:400}
+.lead{color:var(--muted);margin:0 0 24px}
+p{margin:0 0 14px}
+
+/* rounds */
+.rounds{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.rnd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.rnd h3{font-size:18px}
+.cubes{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 6px}
+.cube{width:16px;height:16px;border-radius:3px;background:var(--ink)}
+.cube.gone{background:transparent;border:2px dashed var(--muted)}
+.rnd small{color:var(--muted)}
+
+/* setup */
+.setup{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.panel h3{font-size:19px;margin-bottom:10px}
+input[type=range]{width:100%;accent-color:var(--forest)}
+.tokens{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;min-height:48px}
+.tok{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--surface2);font-size:22px}
+.minicard{display:inline-flex;width:34px;height:46px;border-radius:5px;background:var(--forest-bg);border:2px solid var(--forest)}
+.tok.off,.minicard.off{opacity:.2}
+
+/* card anatomy */
+.anat{display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:start}
+.bigcard{position:relative;width:290px;height:420px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:0 2px 0 var(--line);overflow:hidden}
+.bigcard .bc-left{position:absolute;left:0;top:0;bottom:0;width:56px;background:var(--surface2);display:flex;flex-direction:column;align-items:center;padding-top:14px;gap:8px}
+.bigcard .hdot{width:22px;height:22px;border-radius:50%}
+.bigcard .bc-food{position:absolute;left:8px;top:96px;display:flex;flex-direction:column;gap:2px;font-size:22px}
+.bigcard .bc-pts{position:absolute;left:10px;top:178px;font-family:"Gowun Batang",serif;font-size:26px;font-weight:700;text-align:center;width:36px}
+.bigcard .bc-pts small{display:block;font-size:11px;font-weight:400;font-family:"Gowun Dodum",sans-serif}
+.bigcard .bc-nest{position:absolute;left:8px;top:250px;width:40px;text-align:center;font-size:13px;line-height:1.3}
+.bigcard .bc-nest .eggs{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:4px}
+.bigcard .bc-nest .eggs i{width:12px;height:15px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--egg)}
+.bigcard .bc-name{position:absolute;left:68px;top:14px;right:12px}
+.bigcard .bc-name b{font-family:"Gowun Batang",serif;font-size:24px;display:block}
+.bigcard .bc-name i{font-size:13px;color:var(--muted)}
+.bigcard .bc-art{position:absolute;left:68px;right:12px;top:82px;height:170px;border-radius:10px;background:var(--forest-bg);display:flex;align-items:center;justify-content:center}
+.bigcard .bc-art svg{width:150px;height:auto}
+.bigcard .bc-wing{position:absolute;left:68px;right:12px;top:258px;font-size:13px;color:var(--muted)}
+.bigcard .bc-power{position:absolute;left:68px;right:12px;top:286px;bottom:14px;border-radius:8px;background:var(--brown-bg);padding:10px;font-size:14px;line-height:1.5}
+.bigcard .bc-power b{color:var(--brown)}
+.hot{position:absolute;z-index:2;width:28px;height:28px;border-radius:50%;border:2px solid var(--surface);background:var(--ink);color:var(--paper);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.hot[aria-pressed=true]{background:var(--wet);transform:scale(1.15)}
+.anat-list{list-style:none;padding:0;margin:0}
+.anat-list li{padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.anat-list li b{font-family:"Gowun Batang",serif;font-size:18px}
+.anat-list li p{margin:4px 0 0;color:var(--muted);font-size:15px}
+.anat-list li.on{background:var(--surface);border-color:var(--line)}
+.anat-list li.on p{color:var(--ink)}
+
+/* simulator */
+.actions-explain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.ax{border-radius:12px;padding:14px;font-size:15px;line-height:1.55}
+.ax b{display:block;font-family:"Gowun Batang",serif;font-size:18px;margin-bottom:4px}
+.ax.play{background:var(--surface);border:1px solid var(--line)}
+#sim{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+.sim-head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sim-head .stat{font-size:15px;color:var(--muted)}
+.sim-head .stat b{color:var(--ink);font-size:18px;font-family:"Gowun Batang",serif}
+.sim-cubes{display:inline-flex;gap:4px;vertical-align:middle;margin-left:6px}
+.sim-cubes .cube{width:13px;height:13px}
+.instr{background:var(--surface2);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;min-height:48px}
+.instr span{flex:1 1 260px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:15px}
+.btn:hover:not(:disabled){border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.scroll{overflow-x:auto}
+.mat{min-width:700px;display:grid;grid-template-columns:120px repeat(5,1fr) 70px;gap:6px}
+.mat .costrow{font-size:13px;color:var(--muted);text-align:center;padding:2px 0}
+.mat .playbtn{grid-column:1/-1;display:flex;gap:10px;align-items:center}
+.act{border:none;border-radius:10px;padding:10px;cursor:pointer;text-align:left;line-height:1.35;font-size:14px}
+.act b{display:block;font-family:"Gowun Batang",serif;font-size:17px}
+.act:disabled{cursor:not-allowed;opacity:.55}
+.act.forest{background:var(--forest);color:var(--surface)} .act.grass{background:var(--grass);color:var(--surface)} .act.wet{background:var(--wet);color:var(--surface)}
+.act.play{background:var(--ink);color:var(--paper);padding:10px 16px}
+.slot{min-height:96px;border-radius:10px;border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:13px;color:var(--muted);text-align:center;padding:4px}
+.row-forest .slot{background:var(--forest-bg)} .row-grass .slot{background:var(--grass-bg)} .row-wet .slot{background:var(--wet-bg)}
+.slot.cur{border-style:solid;border-color:var(--ink);color:var(--ink)}
+.slot.cur::before{content:"지금 보상";font-size:11px;color:var(--muted)}
+.slot.can{cursor:pointer;box-shadow:0 0 0 3px var(--focus)}
+.slot.bird{border-style:solid;border-color:transparent;background:var(--surface)!important;align-items:stretch;justify-content:flex-start;color:var(--ink);text-align:left;padding:7px;border:1px solid var(--line);cursor:default}
+.slot.bird.can{cursor:pointer}
+.slot.bird b{font-family:"Gowun Batang",serif;font-size:15px}
+.slot.bird .meta{font-size:11px;color:var(--muted)}
+.eggline{display:flex;gap:3px;margin-top:auto;padding-top:4px;flex-wrap:wrap}
+.eggline i{width:11px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;border:1.5px solid var(--egg)}
+.eggline i.f{background:var(--egg)}
+.slot.end{border-style:dotted}
+.slot.fired{animation:fire .9s ease}
+@keyframes fire{0%{box-shadow:0 0 0 0 var(--brown)}40%{box-shadow:0 0 0 5px var(--brown)}100%{box-shadow:0 0 0 0 transparent}}
+.lower{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;margin-top:16px}
+.zone{border:1px solid var(--line);border-radius:12px;padding:12px}
+.zone h3{font-size:16px;margin-bottom:8px}
+.feeder{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.die{width:50px;height:50px;border-radius:10px;background:var(--surface2);border:2px solid var(--line);font-size:21px;display:flex;align-items:center;justify-content:center;cursor:default;padding:0}
+.die.can{cursor:pointer;border-color:var(--forest)}
+.die.can:hover{transform:translateY(-2px)}
+.die.pending{border-color:var(--ink);box-shadow:0 0 0 3px var(--focus)}
+.foodbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.foodbar span{background:var(--surface2);border-radius:999px;padding:3px 10px;font-size:14px}
+.hand{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.hc{flex:none;width:132px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:8px;text-align:left;font-size:12px;line-height:1.4;cursor:default}
+.hc.can{cursor:pointer}
+.hc.can:hover{border-color:var(--ink)}
+.hc.sel{box-shadow:0 0 0 3px var(--focus);border-color:var(--ink)}
+.hc.dim{opacity:.5}
+.hc b{font-family:"Gowun Batang",serif;font-size:15px;display:block}
+.hc .habs{display:flex;gap:3px;margin:3px 0}
+.hc .habs i{font-style:normal;font-size:10px;padding:1px 6px;border-radius:999px;color:var(--surface)}
+.hc .habs .forest{background:var(--forest)} .hc .habs .grass{background:var(--grass)} .hc .habs .wet{background:var(--wet)}
+.hc .pw{margin-top:5px;border-radius:5px;padding:3px 5px;background:var(--surface2);color:var(--muted)}
+.hc .pw.brown{background:var(--brown-bg);color:var(--ink)}
+.deckbtn{flex:none;width:90px;border-radius:10px;border:2px solid var(--wet);background:var(--wet-bg);cursor:pointer;font-size:13px}
+.deckbtn:disabled{cursor:default;border-color:var(--line);opacity:.6}
+.log{margin-top:16px;max-height:160px;overflow-y:auto;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.log p{margin:0 0 4px}
+.log p:first-child{color:var(--ink)}
+.scorebar{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted)}
+.scorebar b{color:var(--ink)}
+.endbox{border:2px solid var(--ink);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--surface)}
+.endbox h3{font-size:22px;margin-bottom:6px}
+
+/* powers */
+.powers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pw-card{border-radius:14px;padding:18px;border:1px solid var(--line)}
+.pw-card h3{font-size:20px;margin-bottom:8px}
+.pw-card .ex{margin-top:12px;font-size:14px;border-radius:8px;padding:8px 10px;background:var(--surface)}
+.pw-brown{background:var(--brown-bg)} .pw-brown h3{color:var(--brown)}
+.pw-white{background:var(--surface)} .pw-white .ex{background:var(--surface2)}
+.pw-pink{background:var(--pink-bg)} .pw-pink h3{color:var(--pink)}
+
+/* round end */
+ol.steps{padding:0;margin:0;list-style:none;counter-reset:s;display:grid;gap:10px;max-width:40em}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+ol.steps li::before{content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start}
+.calc-rows{display:grid;gap:8px}
+.calc-row{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.calc-row label small{display:block;color:var(--muted);font-size:13px}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.stepper button{border:none;background:var(--surface2);width:34px;height:36px;cursor:pointer;font-size:18px}
+.stepper input{width:100%;min-width:0;border:none;text-align:center;background:transparent;color:var(--ink);font:inherit;font-size:17px;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.total{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);background:var(--ink);color:var(--paper);border-radius:14px;padding:22px}
+.total .big{font-family:"Gowun Batang",serif;font-size:64px;line-height:1;font-weight:700}
+.total p{font-size:14px;opacity:.8;margin:10px 0 0}
+
+footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+
+@media (max-width:820px){
+  .rounds{grid-template-columns:repeat(2,1fr)}
+  .setup,.anat,.lower,.calc{grid-template-columns:1fr}
+  .actions-explain,.powers{grid-template-columns:1fr 1fr}
+  .bigcard{margin:0 auto}
+  .total{position:static}
+}
+@media (max-width:520px){
+  .actions-explain,.powers{grid-template-columns:1fr}
+  body{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="목차"><div class="wrap">
+  <a href="#overview">게임 개요</a><a href="#setup">준비</a><a href="#card">새 카드 읽기</a><a href="#play">직접 해 보기</a><a href="#powers">새의 능력</a><a href="#round-end">라운드 끝</a><a href="#scoring">점수 계산</a>
+  <button type="button" class="theme-btn" id="themeBtn" aria-label="다크 모드로 바꾸기"><span aria-hidden="true">🌙</span><span class="tl">다크</span></button>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <h1>윙스팬<small>새를 모아 나만의 서식지를 꾸미는 게임, 규칙을 손으로 익혀 봅니다</small></h1>
+  <p>윙스팬은 1~5명이 즐기는 카드 기반 엔진 빌딩 보드게임입니다. 4라운드 동안 새 카드를 개인 보드의 세 서식지에 내려놓고, 새들의 능력이 서로 맞물리게 만들어 가장 많은 점수를 얻으면 이깁니다.</p>
+  <div class="habstrip" aria-label="세 가지 서식지">
+    <div class="h-forest"><b>숲</b>먹이를 얻는 곳</div>
+    <div class="h-grass"><b>초원</b>알을 낳는 곳</div>
+    <div class="h-wet"><b>습지</b>새 카드를 뽑는 곳</div>
+  </div>
+</div></header>
+
+<section id="overview"><div class="wrap">
+  <h2><span class="n">1</span>게임 개요</h2>
+  <div class="prose">
+    <p>자기 차례가 오면 <b>행동 큐브 1개</b>를 개인 보드에 놓고 네 가지 행동 중 하나를 합니다. 새 내놓기, 먹이 얻기(숲), 알 낳기(초원), 카드 뽑기(습지)입니다. 모두 큐브를 다 쓰면 그 라운드가 끝납니다.</p>
+    <p>라운드마다 쓸 수 있는 큐브가 하나씩 줄어듭니다. 라운드가 끝날 때마다 큐브 하나를 라운드 목표판에 올려 점수를 표시하기 때문입니다. 그래서 게임이 진행될수록 한 번의 행동이 더 중요해지고, 그만큼 미리 키워 둔 새들의 연쇄 능력이 빛을 발합니다.</p>
+  </div>
+  <div class="rounds" id="roundsViz"></div>
+  <p class="prose">게임 전체에서 행동은 단 26번뿐입니다. 4라운드가 끝나면 점수를 합산하고, 동점이면 남은 먹이 토큰이 많은 사람이 이깁니다.</p>
+</div></section>
+
+<section id="setup"><div class="wrap">
+  <h2><span class="n">2</span>게임 준비</h2>
+  <p class="lead">각자 새 카드 5장, 보너스 카드 2장, 그리고 종류별로 하나씩 먹이 토큰 5개를 받습니다.</p>
+  <div class="setup">
+    <div class="prose">
+      <p><b>보너스 카드</b>는 2장 중 1장만 남깁니다. 게임이 끝날 때 조건을 채우면 추가 점수를 줍니다(예: 날개 길이가 짧은 새를 많이 모으기).</p>
+      <p><b>새 카드와 먹이</b>는 합쳐서 5개만 남깁니다. 새 카드 한 장을 남길 때마다 먹이 토큰 하나를 버려야 합니다. 새를 많이 남기면 선택지가 넓어지지만, 처음 몇 마리를 내놓을 먹이가 부족해집니다.</p>
+      <p>테이블 가운데에는 새 카드 3장을 앞면으로 펼친 <b>카드 진열대</b>, 먹이 주사위 5개가 든 <b>모이통</b>, 그리고 이번 게임의 <b>라운드 목표판</b>을 놓습니다.</p>
+    </div>
+    <div class="panel">
+      <h3>무엇을 남길까요?</h3>
+      <label for="keepRange">남길 새 카드: <b id="keepN">3</b>장 → 먹이 <b id="foodN">2</b>개</label>
+      <input type="range" id="keepRange" min="0" max="5" value="3">
+      <div class="tokens" id="keepViz" aria-hidden="true"></div>
+      <p id="keepTip" style="font-size:15px;color:var(--muted);margin-top:12px"></p>
+    </div>
+  </div>
+</div></section>
+
+<section id="card"><div class="wrap">
+  <h2><span class="n">3</span>새 카드 읽기</h2>
+  <p class="lead">번호를 누르면 카드의 각 부분이 무엇을 뜻하는지 볼 수 있습니다. 아래 카드는 설명을 위한 예시입니다.</p>
+  <div class="anat">
+    <div class="bigcard" id="bigcard">
+      <div class="bc-left">
+        <span class="hdot" style="background:var(--forest)"></span>
+        <span class="hdot" style="background:var(--grass)"></span>
+      </div>
+      <div class="bc-food" aria-label="먹이 비용: 무척추동물, 씨앗">🐛<span>🌾</span></div>
+      <div class="bc-pts">4<small>점</small></div>
+      <div class="bc-nest">밥그릇형<div class="eggs"><i></i><i></i><i></i><i></i></div></div>
+      <div class="bc-name"><b>박새</b><i>Parus minor</i></div>
+      <div class="bc-art" aria-hidden="true">
+        <svg viewBox="0 0 120 90"><path d="M18 58c10-22 30-34 52-32 8-8 20-10 28-4l10 2-9 5c3 8 1 18-6 26-12 14-34 18-54 12L8 72l10-14z" fill="var(--forest)" opacity=".85"/><circle cx="92" cy="30" r="3" fill="var(--surface)"/><path d="M44 50c10 6 24 6 34-2" stroke="var(--surface)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 86h70" stroke="var(--brown)" stroke-width="4" stroke-linecap="round"/><path d="M60 74v12M72 74v12" stroke="var(--ink)" stroke-width="2"/></svg>
+      </div>
+      <div class="bc-wing">날개 길이 22cm</div>
+      <div class="bc-power"><b>활성화 시:</b> 모이통에서 🌾 씨앗 1개를 얻고, 이 카드에 저장할 수 있습니다.</div>
+      <button class="hot" data-h="0" style="left:228px;top:12px" aria-pressed="false" aria-label="이름">1</button>
+      <button class="hot" data-h="1" style="left:30px;top:6px" aria-pressed="false" aria-label="서식지">2</button>
+      <button class="hot" data-h="2" style="left:34px;top:92px" aria-pressed="false" aria-label="먹이 비용">3</button>
+      <button class="hot" data-h="3" style="left:34px;top:172px" aria-pressed="false" aria-label="점수">4</button>
+      <button class="hot" data-h="4" style="left:34px;top:246px" aria-pressed="false" aria-label="둥지와 알">5</button>
+      <button class="hot" data-h="5" style="left:200px;top:252px" aria-pressed="false" aria-label="날개 길이">6</button>
+      <button class="hot" data-h="6" style="left:250px;top:290px" aria-pressed="false" aria-label="능력">7</button>
+    </div>
+    <ul class="anat-list" id="anatList"></ul>
+  </div>
+</div></section>
+
+<section id="play"><div class="wrap">
+  <h2><span class="n">4</span>개인 보드와 네 가지 행동, 직접 해 보기</h2>
+  <p class="lead">아래 보드에서 1인 미니 게임을 해 보세요. 실제 규칙 흐름은 그대로이고, 새 카드와 라운드 목표만 단순화했습니다.</p>
+  <div class="actions-explain">
+    <div class="ax play"><b>새 내놓기</b>손의 새 카드를 그 새가 사는 서식지의 가장 왼쪽 빈칸에 놓습니다. 카드의 먹이를 내고, 칸 위에 적힌 만큼 알도 내야 합니다.</div>
+    <div class="ax h-forest"><b>먹이 얻기</b>모이통에서 주사위를 골라 그 먹이를 가져옵니다. 숲에 새가 많을수록 더 많이 가져옵니다.</div>
+    <div class="ax h-grass"><b>알 낳기</b>알을 보드 위 새들에게 나눠 놓습니다. 새마다 둥지에 넣을 수 있는 알의 한도가 있습니다.</div>
+    <div class="ax h-wet"><b>카드 뽑기</b>앞면 진열대 3장 또는 덱 맨 위에서 새 카드를 가져옵니다. 차례가 끝나면 진열대를 채웁니다.</div>
+  </div>
+  <div class="prose" style="margin-bottom:22px">
+    <p>핵심은 <b>보상이 커지는 구조</b>입니다. 서식지 행동을 하면 그 줄에서 가장 왼쪽 빈칸에 적힌 만큼 보상을 받고, 이어서 그 줄에 놓인 새들의 갈색 능력이 <b>오른쪽에서 왼쪽 순서로</b> 발동합니다. 즉, 새를 내놓을수록 같은 행동이 점점 강해집니다.</p>
+    <p style="color:var(--muted);font-size:15px">실제 보드에는 짝수 칸마다 교환 보너스도 있습니다. 숲에서는 카드 1장을 버리고 먹이 1개 더, 초원에서는 먹이 1개를 버리고 알 1개 더, 습지에서는 알 1개를 버리고 카드 1장 더 받을 수 있습니다. 데모에서는 생략했습니다.</p>
+  </div>
+  <div id="sim" aria-label="윙스팬 미니 게임"></div>
+</div></section>
+
+<section id="powers"><div class="wrap">
+  <h2><span class="n">5</span>새의 능력, 세 가지 색</h2>
+  <p class="lead">능력 칸의 배경색이 언제 발동하는지 알려 줍니다.</p>
+  <div class="powers">
+    <div class="pw-card pw-brown"><h3>갈색: 활성화 시</h3><p>그 새가 있는 서식지의 행동을 할 때마다 발동합니다. 보상을 받은 뒤, 줄의 오른쪽 끝 새부터 왼쪽으로 차례대로 발동하며 하나하나 쓸지 말지 고를 수 있습니다.</p><div class="ex">예: 습지에서 카드를 뽑을 때마다 이 새가 카드 1장을 더 뽑게 해 줍니다.</div></div>
+    <div class="pw-card pw-white"><h3>흰색: 내놓을 때</h3><p>새를 보드에 내려놓는 바로 그 순간 한 번만 발동합니다. 그 뒤로는 다시 쓰이지 않습니다.</p><div class="ex">예: 내놓을 때 보너스 카드 2장을 뽑아 1장을 갖습니다.</div></div>
+    <div class="pw-card pw-pink"><h3>분홍색: 다른 사람 차례에</h3><p>다른 플레이어가 특정 행동을 했을 때 발동합니다. 내 차례와 다음 내 차례 사이에 한 번만 쓸 수 있습니다.</p><div class="ex">예: 다른 사람이 초원에서 알을 낳으면, 나도 둥지 모양이 맞는 새에 알 1개를 낳습니다.</div></div>
+  </div>
+  <div class="prose" style="margin-top:22px">
+    <p>능력 중에는 먹이를 카드 위에 <b>저장</b>하거나, 다른 카드를 새 카드 아래에 <b>끼워 넣는</b> 것이 많습니다. 이렇게 저장된 먹이와 끼워 넣은 카드는 게임 끝에 개당 1점이 됩니다. 능력이 없는 새는 대체로 점수가 높습니다.</p>
+  </div>
+</div></section>
+
+<section id="round-end"><div class="wrap">
+  <h2><span class="n">6</span>라운드가 끝나면</h2>
+  <p class="lead">모든 플레이어가 큐브를 다 쓰면 다음 순서로 정리합니다.</p>
+  <ol class="steps">
+    <li><div>보드 위 행동 큐브를 모두 거둬들입니다.</div></li>
+    <li><div>이번 라운드 목표를 채점하고, 각자 큐브 하나를 목표판의 자기 점수 칸에 올립니다. 목표판의 한쪽 면은 순위로, 다른 면은 개수만큼(최대 5점) 점수를 줍니다.</div></li>
+    <li><div>카드 진열대의 3장을 버리고 새로 3장을 펼칩니다. 모이통은 다시 굴리지 않습니다.</div></li>
+    <li><div>선 플레이어 토큰을 시계 방향으로 넘기고 다음 라운드를 시작합니다.</div></li>
+  </ol>
+</div></section>
+
+<section id="scoring"><div class="wrap">
+  <h2><span class="n">7</span>최종 점수 계산</h2>
+  <p class="lead">4라운드가 끝나면 여섯 가지 점수를 더합니다. 숫자를 넣어 계산해 보세요.</p>
+  <div class="calc">
+    <div class="calc-rows" id="calcRows"></div>
+    <div class="total" aria-live="polite"><div style="font-size:15px;opacity:.8">총점</div><div class="big" id="calcTotal">0</div><p>동점이면 남은 먹이 토큰이 많은 사람이 이깁니다.</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap prose">
+  윙스팬은 Elizabeth Hargrave가 디자인하고 Stonemaier Games가 출간한 게임입니다. 이 페이지는 규칙을 이해하기 위한 비공식 요약이며, 미니 게임의 새 카드는 실제 카드와 다른 예시입니다. 정확한 규칙은 게임에 포함된 규칙서를 참고하세요.
+  <p class="credit">이 페이지는 Claude Opus 5.5가 이상훈 님의 부탁으로 제작했습니다.</p>
+</div></footer>
+
+<script>
+(function(){
+/* ---------- theme toggle ---------- */
+var root=document.documentElement,tBtn=document.getElementById('themeBtn'),mq=window.matchMedia('(prefers-color-scheme: dark)');
+function curTheme(){var t=root.getAttribute('data-theme');return t||(mq.matches?'dark':'light');}
+function paintBtn(){var d=curTheme()==='dark';tBtn.querySelector('[aria-hidden]').textContent=d?'☀️':'🌙';tBtn.querySelector('.tl').textContent=d?'라이트':'다크';tBtn.setAttribute('aria-label',d?'라이트 모드로 바꾸기':'다크 모드로 바꾸기');}
+tBtn.addEventListener('click',function(){var n=curTheme()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('ws-theme',n);}catch(e){}paintBtn();});
+if(mq.addEventListener)mq.addEventListener('change',paintBtn);
+paintBtn();
+
+/* ---------- 1. rounds viz ---------- */
+var CUBES=[8,7,6,5];
+document.getElementById('roundsViz').innerHTML=CUBES.map(function(c,i){
+  var s='';for(var k=0;k<8;k++)s+='<span class="cube'+(k<c?'':' gone')+'"></span>';
+  return '<div class="rnd"><h3>'+(i+1)+'라운드</h3><div class="cubes" aria-hidden="true">'+s+'</div><small>행동 '+c+'번</small></div>';
+}).join('');
+
+/* ---------- 2. setup slider ---------- */
+var FOODS={inv:{i:'🐛',n:'무척추동물'},seed:{i:'🌾',n:'씨앗'},fish:{i:'🐟',n:'물고기'},fruit:{i:'🍒',n:'열매'},rodent:{i:'🐭',n:'설치류'}};
+var FK=['inv','seed','fish','fruit','rodent'];
+var range=document.getElementById('keepRange');
+function upKeep(){
+  var k=+range.value,html='';
+  for(var i=0;i<5;i++)html+='<span class="minicard'+(i<k?'':' off')+'"></span>';
+  html+='<span style="width:10px"></span>';
+  for(var j=0;j<5;j++)html+='<span class="tok'+(j<5-k?'':' off')+'">'+FOODS[FK[j]].i+'</span>';
+  document.getElementById('keepViz').innerHTML=html;
+  document.getElementById('keepN').textContent=k;
+  document.getElementById('foodN').textContent=5-k;
+  var tips=['새가 하나도 없으면 첫 차례를 카드 뽑기로 시작해야 합니다.','먹이는 넉넉하지만 낼 수 있는 새가 하나뿐입니다.','먹이가 넉넉해 두 마리를 빠르게 내놓기 좋습니다.','가장 흔한 선택입니다. 남긴 먹이로 바로 낼 수 있는 새가 있는지 확인하세요.','먹이가 1개뿐이라 첫 차례는 먹이 얻기가 되기 쉽습니다.','먹이 없이 시작합니다. 선택지는 넓지만 출발이 느립니다.'];
+  document.getElementById('keepTip').textContent=tips[k];
+}
+range.addEventListener('input',upKeep);upKeep();
+
+/* ---------- 3. card anatomy ---------- */
+var ANAT=[
+ ['이름','새의 이름과 학명입니다. 게임의 모든 새는 실제로 존재하는 새입니다.'],
+ ['서식지','이 새를 놓을 수 있는 서식지입니다. 초록은 숲, 노랑은 초원, 파랑은 습지입니다. 여러 개면 그중 하나를 고릅니다.'],
+ ['먹이 비용','새를 내놓을 때 내야 하는 먹이입니다. 비용 사이에 사선(/)이 있으면 그중 하나만 내면 됩니다. 원하는 먹이 2개를 내면 아무 먹이 1개로 대신할 수 있습니다.'],
+ ['점수','게임이 끝날 때 이 새가 주는 점수입니다.'],
+ ['둥지와 알 한도','둥지 모양(밥그릇형, 구멍형, 평평형, 땅 둥지, 별 모양은 어디에나 해당)과 이 새에 놓을 수 있는 알의 최대 개수입니다. 알은 게임 끝에 개당 1점입니다.'],
+ ['날개 길이','게임 이름의 유래입니다. 일부 보너스 카드와 능력이 날개 길이를 따집니다.'],
+ ['능력','새의 특수 능력입니다. 배경색이 발동 시점을 알려 줍니다. 아래 5장에서 자세히 설명합니다.']
+];
+var list=document.getElementById('anatList');
+list.innerHTML=ANAT.map(function(a,i){return '<li data-h="'+i+'"><b>'+(i+1)+'. '+a[0]+'</b><p>'+a[1]+'</p></li>';}).join('');
+function pickAnat(i){
+  document.querySelectorAll('.hot').forEach(function(h){h.setAttribute('aria-pressed',h.dataset.h==i?'true':'false');});
+  list.querySelectorAll('li').forEach(function(l){l.classList.toggle('on',l.dataset.h==i);});
+}
+document.getElementById('bigcard').addEventListener('click',function(e){var h=e.target.closest('.hot');if(h)pickAnat(+h.dataset.h);});
+list.addEventListener('click',function(e){var l=e.target.closest('li');if(l)pickAnat(+l.dataset.h);});
+pickAnat(0);
+
+/* ---------- 7. calculator ---------- */
+var CALC=[['새 카드 점수','보드 위 새 카드에 적힌 점수의 합'],['보너스 카드','조건을 채운 보너스 카드 점수'],['라운드 목표','목표판에 올린 큐브 점수의 합'],['알','알 1개당 1점'],['저장한 먹이','카드 위 먹이 1개당 1점'],['끼워 넣은 카드','새 카드 아래 카드 1장당 1점']];
+var cr=document.getElementById('calcRows');
+cr.innerHTML=CALC.map(function(c,i){return '<div class="calc-row"><label for="c'+i+'">'+c[0]+'<small>'+c[1]+'</small></label><div class="stepper"><button type="button" data-d="-1" data-i="'+i+'" aria-label="'+c[0]+' 줄이기">−</button><input id="c'+i+'" type="number" min="0" value="0" inputmode="numeric"><button type="button" data-d="1" data-i="'+i+'" aria-label="'+c[0]+' 늘리기">+</button></div></div>';}).join('');
+function calcSum(){var t=0;for(var i=0;i<CALC.length;i++){t+=Math.max(0,parseInt(document.getElementById('c'+i).value)||0);}document.getElementById('calcTotal').textContent=t;}
+cr.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var inp=document.getElementById('c'+b.dataset.i);inp.value=Math.max(0,(parseInt(inp.value)||0)+(+b.dataset.d));calcSum();});
+cr.addEventListener('input',calcSum);
+
+/* ---------- 4. simulator ---------- */
+var HAB={
+  forest:{n:'숲',act:'먹이 얻기',rw:[1,1,2,2,3,3],u:'먹이'},
+  grass:{n:'초원',act:'알 낳기',rw:[2,2,3,3,4,4],u:'알'},
+  wet:{n:'습지',act:'카드 뽑기',rw:[1,1,2,2,3,3],u:'카드'}
+};
+var HK=['forest','grass','wet'];
+var EGG_COST=[0,1,1,2,2];
+var GOALS=[
+  {n:'숲에 있는 새의 수',f:function(){return S.mat.forest.length;}},
+  {n:'알이 1개 이상 있는 새의 수',f:function(){return allBirds().filter(function(b){return b.eggs>0;}).length;}},
+  {n:'습지에 있는 새의 수',f:function(){return S.mat.wet.length;}},
+  {n:'초원에 있는 새의 수',f:function(){return S.mat.grass.length;}}
+];
+var BIRDS=[
+ {n:'참새',h:['grass','forest'],c:['seed'],p:2,e:4},
+ {n:'박새',h:['forest'],c:['seed','inv'],p:3,e:4,pw:{t:'food',f:'seed'}},
+ {n:'청둥오리',h:['wet','grass'],c:['seed'],p:2,e:4,pw:{t:'draw'}},
+ {n:'왜가리',h:['wet'],c:['fish','fish'],p:6,e:2},
+ {n:'물총새',h:['wet'],c:['fish'],p:4,e:3,pw:{t:'food',f:'fish'}},
+ {n:'오색딱따구리',h:['forest'],c:['inv','inv'],p:4,e:3,pw:{t:'egg'}},
+ {n:'까치',h:['forest','grass'],c:['fruit','inv'],p:3,e:4,pw:{t:'draw'}},
+ {n:'종다리',h:['grass'],c:['inv','seed'],p:3,e:5,pw:{t:'egg'}},
+ {n:'꿩',h:['grass'],c:['seed','fruit'],p:4,e:5},
+ {n:'수리부엉이',h:['forest'],c:['rodent','rodent'],p:7,e:2},
+ {n:'황조롱이',h:['grass'],c:['rodent'],p:5,e:3},
+ {n:'원앙',h:['wet','forest'],c:['seed','fruit'],p:4,e:3,pw:{t:'draw'}},
+ {n:'쇠백로',h:['wet'],c:['fish','inv'],p:4,e:3,pw:{t:'egg'}},
+ {n:'직박구리',h:['forest'],c:['fruit'],p:2,e:3,pw:{t:'food',f:'fruit'}},
+ {n:'제비',h:['grass','wet'],c:['inv'],p:3,e:3}
+];
+var DIE=['inv','seed','fish','fruit','rodent','invseed'];
+function dieIcon(f){return f==='invseed'?'🐛/🌾':FOODS[f].i;}
+function pwText(pw){if(!pw)return '능력 없음';if(pw.t==='draw')return '활성화 시: 카드 1장 뽑기';if(pw.t==='egg')return '활성화 시: 이 새에 알 1개';return '활성화 시: '+FOODS[pw.f].i+' 1개 얻기';}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function roll(n){var r=[];for(var i=0;i<n;i++)r.push(DIE[Math.floor(Math.random()*6)]);return r;}
+var uid=0;
+function makeDeck(){return shuffle(BIRDS.concat(BIRDS).map(function(b){var o={};for(var k in b)o[k]=b[k];o.id=++uid;return o;}));}
+var S;
+function draw1(){if(!S.deck.length)S.deck=makeDeck();return S.deck.shift();}
+function allBirds(){return S.mat.forest.concat(S.mat.grass,S.mat.wet);}
+function eggTotal(){return allBirds().reduce(function(a,b){return a+b.eggs;},0);}
+function eggRoom(){return allBirds().reduce(function(a,b){return a+(b.c.e-b.eggs);},0);}
+function log(m){S.log.unshift(m);if(S.log.length>40)S.log.pop();}
+function newGame(){
+  S={deck:makeDeck(),hand:[],tray:[],food:{inv:1,seed:1,fish:1,fruit:1,rodent:1},feeder:roll(5),
+     mat:{forest:[],grass:[],wet:[]},round:0,cubes:CUBES[0],goalPts:[],mode:null,sel:null,rem:0,act:null,pending:null,log:[],over:false,fired:null};
+  for(var i=0;i<3;i++){S.hand.push(draw1());S.tray.push(draw1());}
+  log('게임 시작! 1라운드, 행동 큐브 8개. 손에 새 3장과 먹이 5개가 있습니다.');
+  render();
+}
+function canPayFood(card){var f={};for(var k in S.food)f[k]=S.food[k];for(var i=0;i<card.c.length;i++){var t=card.c[i];if(f[t]>0)f[t]--;else return false;}return true;}
+function rowOk(card,h){var len=S.mat[h].length;return card.h.indexOf(h)>=0&&len<5&&eggTotal()>=EGG_COST[len];}
+function playable(card){return canPayFood(card)&&card.h.some(function(h){return rowOk(card,h);});}
+function whyNot(card){
+  if(!canPayFood(card))return '먹이가 부족합니다. 필요한 먹이: '+card.c.map(function(t){return FOODS[t].i;}).join(' ');
+  return '놓을 수 있는 칸이 없거나 알이 부족합니다. 서식지 칸 위의 알 비용을 확인하세요.';
+}
+function payEggs(n){while(n>0){var bs=allBirds().filter(function(b){return b.eggs>0;}).sort(function(a,b){return b.eggs-a.eggs;});bs[0].eggs--;n--;}}
+
+function start(a){
+  if(S.over||S.mode)return;
+  if(a==='play'){
+    if(!S.hand.length){log('손에 새 카드가 없습니다. 먼저 습지에서 카드를 뽑으세요.');return render();}
+    S.mode='play';S.sel=null;return render();
+  }
+  var len=S.mat[a].length,n=HAB[a].rw[len];
+  S.act=a;S.rem=n;
+  if(a==='forest'){S.mode='food';if(!S.feeder.length){S.feeder=roll(5);log('모이통이 비어 있어 주사위 5개를 모두 굴렸습니다.');}log(HAB[a].n+'에서 먹이 얻기: 먹이 '+n+'개를 가져옵니다.');}
+  if(a==='grass'){S.mode='eggs';log(HAB[a].n+'에서 알 낳기: 알 '+n+'개를 낳습니다.');if(!allBirds().length)log('보드에 새가 없어 알을 놓을 곳이 없습니다. 이럴 땐 알을 받을 수 없어요.');}
+  if(a==='wet'){S.mode='cards';log(HAB[a].n+'에서 카드 뽑기: 카드 '+n+'장을 가져옵니다.');}
+  render();
+}
+function finish(){
+  var h=S.act,row=S.mat[h],fired=[];
+  S.mode=null;S.pending=null;
+  for(var i=row.length-1;i>=0;i--){
+    var b=row[i],pw=b.c.pw;if(!pw)continue;
+    if(pw.t==='draw'){S.hand.push(draw1());log('↳ '+b.c.n+' 능력 발동: 카드 1장을 뽑았습니다.');fired.push(i);}
+    else if(pw.t==='egg'){if(b.eggs<b.c.e){b.eggs++;log('↳ '+b.c.n+' 능력 발동: 알 1개를 낳았습니다.');}else log('↳ '+b.c.n+' 능력: 둥지가 가득 차 알을 낳지 못했습니다.');fired.push(i);}
+    else {S.food[pw.f]++;log('↳ '+b.c.n+' 능력 발동: '+FOODS[pw.f].i+' 1개를 얻었습니다.');fired.push(i);}
+  }
+  S.fired={h:h,idx:fired};
+  endTurn();
+}
+function endTurn(){
+  while(S.tray.length<3)S.tray.push(draw1());
+  S.cubes--;S.act=null;S.sel=null;
+  if(S.cubes===0)endRound();
+  render();
+  S.fired=null;
+}
+function endRound(){
+  var g=GOALS[S.round],v=g.f(),pts=Math.min(v,5);
+  S.goalPts.push(pts);
+  log('★ '+(S.round+1)+'라운드 끝. 목표 “'+g.n+'” '+v+' → '+pts+'점. 진열대를 새로 채웁니다.');
+  S.round++;
+  if(S.round>=4){S.over=true;log('게임 끝! 점수를 확인하세요.');return;}
+  S.cubes=CUBES[S.round];S.tray=[draw1(),draw1(),draw1()];
+  log((S.round+1)+'라운드 시작. 이번 라운드 행동 큐브는 '+S.cubes+'개입니다.');
+}
+function score(){
+  var bp=allBirds().reduce(function(a,b){return a+b.c.p;},0),eg=eggTotal(),gp=S.goalPts.reduce(function(a,b){return a+b;},0);
+  return {bp:bp,eg:eg,gp:gp,t:bp+eg+gp};
+}
+
+function render(){
+  var el=document.getElementById('sim'),sc=score(),h='';
+  var cubesHtml='';for(var k=0;k<CUBES[Math.min(S.round,3)];k++)cubesHtml+='<span class="cube'+(k<S.cubes?'':' gone')+'"></span>';
+  h+='<div class="sim-head"><div class="stat">'+(S.over?'게임 종료':'<b>'+(S.round+1)+'</b>/4 라운드')+(S.over?'':' · 남은 큐브<span class="sim-cubes" aria-label="남은 큐브 '+S.cubes+'개">'+cubesHtml+'</span>')+'</div>';
+  h+='<div class="stat">이번 라운드 목표: <b style="font-size:15px">'+(S.over?'—':GOALS[S.round].n)+'</b> (지금 '+(S.over?'-':Math.min(GOALS[S.round].f(),5))+'점)</div>';
+  h+='<button class="btn" data-a="reset">처음부터</button></div>';
+  if(S.over){
+    h+='<div class="endbox"><h3>최종 점수 '+sc.t+'점</h3><div class="scorebar"><span>새 카드 <b>'+sc.bp+'</b></span><span>알 <b>'+sc.eg+'</b></span><span>라운드 목표 <b>'+sc.gp+'</b> ('+S.goalPts.join(' + ')+')</span></div><p style="margin:10px 0 0;font-size:15px;color:var(--muted)">실제 게임이라면 여기에 보너스 카드, 저장한 먹이, 끼워 넣은 카드 점수가 더해집니다.</p></div>';
+  }
+  // instruction bar
+  var ins='',btns='';
+  if(S.over)ins='다시 해 보려면 “처음부터”를 누르세요.';
+  else if(!S.mode)ins='행동을 고르세요. 서식지 이름 버튼 또는 “새 내놓기”를 누릅니다.';
+  else if(S.mode==='play'){
+    if(S.sel===null)ins='손에서 낼 새 카드를 고르세요. 테두리가 진한 카드가 지금 낼 수 있는 카드입니다.';
+    else ins='강조된 칸에 놓으세요. 알 비용은 칸 위 숫자, 먹이는 카드에 적힌 만큼 냅니다.';
+    btns='<button class="btn" data-a="cancel">취소</button>';
+  }
+  else if(S.mode==='food'){
+    ins=S.pending!==null?'이 주사위는 두 먹이 중 하나를 고릅니다.':'모이통에서 주사위를 '+S.rem+'개 더 고르세요.';
+    if(S.pending!==null)btns='<button class="btn primary" data-a="dual" data-f="inv">🐛 무척추동물</button><button class="btn primary" data-a="dual" data-f="seed">🌾 씨앗</button>';
+    var same=S.feeder.length>0&&S.feeder.every(function(f){return f===S.feeder[0];});
+    btns+='<button class="btn" data-a="reroll" '+(same?'':'disabled')+' title="모이통의 주사위가 모두 같은 면일 때만 다시 굴릴 수 있습니다">모두 다시 굴리기</button>';
+  }
+  else if(S.mode==='eggs'){
+    ins='알을 놓을 새를 누르세요. 알 '+S.rem+'개 남았습니다.';
+    btns='<button class="btn" data-a="finish">'+(eggRoom()===0?'둥지가 가득 차 마치기':'남은 알 버리고 마치기')+'</button>';
+  }
+  else if(S.mode==='cards')ins='진열대나 덱에서 카드를 '+S.rem+'장 더 가져오세요.';
+  h+='<div class="instr" aria-live="polite"><span>'+ins+'</span>'+btns+'</div>';
+
+  // mat
+  var selCard=S.sel!==null?S.hand.filter(function(c){return c.id===S.sel;})[0]:null;
+  h+='<div class="scroll"><div class="mat">';
+  h+='<div class="playbtn"><button class="act play" data-a="start" data-h="play" '+(S.mode||S.over?'disabled':'')+'><b>새 내놓기</b></button><span style="font-size:13px;color:var(--muted)">새를 놓을 칸은 왼쪽부터 채워집니다. 오른쪽 칸일수록 알 비용이 큽니다.</span></div>';
+  h+='<div class="costrow"></div>'+EGG_COST.map(function(c){return '<div class="costrow">알 비용 '+(c?'🥚'.repeat(c):'없음')+'</div>';}).join('')+'<div class="costrow"></div>';
+  HK.forEach(function(hk){
+    var row=S.mat[hk],len=row.length,H=HAB[hk];
+    h+='<button class="act '+hk+'" data-a="start" data-h="'+hk+'" '+(S.mode||S.over?'disabled':'')+'><b>'+H.n+'</b>'+H.act+'<br>지금 '+H.u+' '+H.rw[len]+'</button>';
+    for(var i=0;i<5;i++){
+      if(i<len){
+        var b=row[i],eggs='';for(var e=0;e<b.c.e;e++)eggs+='<i class="'+(e<b.eggs?'f':'')+'"></i>';
+        var can=S.mode==='eggs'&&b.eggs<b.c.e&&S.rem>0;
+        var fired=S.fired&&S.fired.h===hk&&S.fired.idx.indexOf(i)>=0;
+        h+='<div class="row-'+hk+' slot bird'+(can?' can':'')+(fired?' fired':'')+'" '+(can?'role="button" tabindex="0" data-a="egg" data-h="'+hk+'" data-i="'+i+'" aria-label="'+b.c.n+'에 알 놓기"':'')+'><b>'+b.c.n+'</b><span class="meta">'+b.c.p+'점'+(b.c.pw?' · 갈색 능력':'')+'</span><div class="eggline" aria-label="알 '+b.eggs+'/'+b.c.e+'">'+eggs+'</div></div>';
+      } else {
+        var cur=i===len,canP=cur&&S.mode==='play'&&selCard&&rowOk(selCard,hk);
+        h+='<div class="row-'+hk+' slot'+(cur?' cur':'')+(canP?' can':'')+'" '+(canP?'role="button" tabindex="0" data-a="place" data-h="'+hk+'" aria-label="'+H.n+'에 놓기"':'')+'>'+H.u+' '+H.rw[i]+'</div>';
+      }
+    }
+    h+='<div class="row-'+hk+' slot end'+(len===5?' cur':'')+'">'+H.u+' '+H.rw[5]+'</div>';
+  });
+  h+='</div></div>';
+
+  // lower zones
+  h+='<div class="lower">';
+  h+='<div class="zone"><h3>모이통과 내 먹이</h3><div class="feeder">';
+  S.feeder.forEach(function(f,i){var can=S.mode==='food'&&S.pending===null;h+='<button class="die'+(can?' can':'')+(S.pending===i?' pending':'')+'" data-a="die" data-i="'+i+'" '+(can?'':'disabled')+' aria-label="주사위 '+(f==='invseed'?'무척추동물 또는 씨앗':FOODS[f].n)+'">'+dieIcon(f)+'</button>';});
+  if(!S.feeder.length)h+='<span style="color:var(--muted);font-size:14px">비어 있음. 다음에 먹이를 얻을 때 5개를 모두 굴립니다.</span>';
+  h+='</div><div class="foodbar">'+FK.map(function(k){return '<span>'+FOODS[k].i+' '+S.food[k]+'</span>';}).join('')+'</div></div>';
+  h+='<div class="zone"><h3>카드 진열대</h3><div class="hand">';
+  S.tray.forEach(function(c,i){h+=cardHtml(c,S.mode==='cards','tray',i);});
+  h+='<button class="deckbtn" data-a="deck" '+(S.mode==='cards'?'':'disabled')+'>덱에서<br>1장 뽑기<br><small>'+S.deck.length+'장</small></button>';
+  h+='</div></div></div>';
+  h+='<div class="zone" style="margin-top:16px"><h3>내 손 ('+S.hand.length+'장)</h3><div class="hand">';
+  if(!S.hand.length)h+='<span style="color:var(--muted);font-size:14px">손에 카드가 없습니다. 습지에서 카드를 뽑아 보세요.</span>';
+  S.hand.forEach(function(c){
+    var ok=playable(c),sel=S.sel===c.id,inPlay=S.mode==='play';
+    h+=cardHtml(c,inPlay,'hand',c.id,sel,inPlay&&!ok);
+  });
+  h+='</div></div>';
+  h+='<div class="scorebar" style="margin-top:14px"><span>현재 점수 <b>'+sc.t+'</b></span><span>새 카드 '+sc.bp+'</span><span>알 '+sc.eg+'</span><span>라운드 목표 '+sc.gp+'</span></div>';
+  h+='<div class="log" aria-live="polite">'+S.log.map(function(m){return '<p>'+m+'</p>';}).join('')+'</div>';
+  el.innerHTML=h;
+}
+function cardHtml(c,clickable,where,key,sel,dim){
+  var habs=c.h.map(function(x){return '<i class="'+x+'">'+HAB[x].n+'</i>';}).join('');
+  return '<button class="hc'+(clickable?' can':'')+(sel?' sel':'')+(dim?' dim':'')+'" data-a="'+where+'" data-k="'+key+'" '+(clickable?'':'tabindex="-1"')+' aria-label="'+c.n+', '+c.p+'점">'+
+    '<b>'+c.n+'</b><div class="habs">'+habs+'</div>비용 '+c.c.map(function(t){return FOODS[t].i;}).join('')+' · '+c.p+'점 · 알 '+c.e+'<div class="pw'+(c.pw?' brown':'')+'">'+pwText(c.pw)+'</div></button>';
+}
+
+document.getElementById('sim').addEventListener('click',function(e){
+  var t=e.target.closest('[data-a]');if(!t||t.disabled)return;
+  var a=t.dataset.a;
+  if(a==='reset')return newGame();
+  if(a==='start')return start(t.dataset.h);
+  if(a==='cancel'){S.mode=null;S.sel=null;return render();}
+  if(a==='hand'&&S.mode==='play'){
+    var id=+t.dataset.k,card=S.hand.filter(function(c){return c.id===id;})[0];
+    if(!playable(card)){log(card.n+'은(는) 지금 낼 수 없습니다. '+whyNot(card));S.sel=null;return render();}
+    S.sel=id;return render();
+  }
+  if(a==='place'&&S.mode==='play'){
+    var hk=t.dataset.h,cd=S.hand.filter(function(c){return c.id===S.sel;})[0],col=S.mat[hk].length,ec=EGG_COST[col];
+    cd.c.forEach(function(f){S.food[f]--;});payEggs(ec);
+    S.mat[hk].push({c:cd,eggs:0});S.hand=S.hand.filter(function(c){return c.id!==cd.id;});
+    log(cd.n+'을(를) '+HAB[hk].n+' '+(col+1)+'번째 칸에 내놓았습니다. 먹이 '+cd.c.map(function(f){return FOODS[f].i;}).join('')+(ec?', 알 '+ec+'개':'')+'를 냈습니다.');
+    S.mode=null;return endTurn();
+  }
+  if(a==='die'&&S.mode==='food'){
+    var i=+t.dataset.i;
+    if(S.feeder[i]==='invseed'){S.pending=i;return render();}
+    return takeFood(i,S.feeder[i]);
+  }
+  if(a==='dual'&&S.pending!==null){var p=S.pending;S.pending=null;return takeFood(p,t.dataset.f);}
+  if(a==='reroll'){S.feeder=roll(5);S.pending=null;log('모이통 주사위가 모두 같은 면이라 5개를 다시 굴렸습니다.');return render();}
+  if(a==='egg'&&S.mode==='eggs'){
+    var b=S.mat[t.dataset.h][+t.dataset.i];b.eggs++;S.rem--;
+    if(S.rem===0||eggRoom()===0){if(S.rem>0)log('둥지가 모두 가득 차 남은 알 '+S.rem+'개는 버립니다.');return finish();}
+    return render();
+  }
+  if(a==='finish'&&S.mode==='eggs')return finish();
+  if(a==='tray'&&S.mode==='cards'){var c=S.tray.splice(+t.dataset.k,1)[0];S.hand.push(c);log('진열대에서 '+c.n+'을(를) 가져왔습니다.');return afterCard();}
+  if(a==='deck'&&S.mode==='cards'){var d=draw1();S.hand.push(d);log('덱에서 '+d.n+'을(를) 뽑았습니다.');return afterCard();}
+});
+document.getElementById('sim').addEventListener('keydown',function(e){
+  if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute('role')==='button'){e.preventDefault();e.target.click();}
+});
+function takeFood(i,f){
+  S.feeder.splice(i,1);S.food[f]++;S.rem--;log('모이통에서 '+FOODS[f].i+' '+FOODS[f].n+'을(를) 가져왔습니다.');
+  if(S.rem===0)return finish();
+  if(!S.feeder.length){S.feeder=roll(5);log('모이통이 비어 주사위 5개를 다시 굴렸습니다.');}
+  render();
+}
+function afterCard(){S.rem--;if(S.rem===0)return finish();render();}
+newGame();
+})();
+</script>
+</body>
+</html>
