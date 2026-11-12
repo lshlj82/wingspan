@@ -512,6 +512,16 @@ var BIRDS=[
  {n:'제비',h:['grass','wet'],c:['inv'],p:3,e:3}
 ];
 var DIE=['inv','seed','fish','fruit','rodent','invseed'];
+/* 한국어 조사 자동 선택: 마지막 글자의 받침을 보고 을/를, 이/가, 은/는, 과/와, 으로/로를 고릅니다 */
+function jo(w,t){
+  w=String(w);var ch=w.replace(/[\s)\]”’"'.!?]+$/,'').slice(-1),code=ch.charCodeAt(0),has=false,rieul=false;
+  if(code>=0xAC00&&code<=0xD7A3){var j=(code-0xAC00)%28;has=j>0;rieul=j===8;}
+  else if(/[0-9]/.test(ch)){has='013678'.indexOf(ch)>=0;rieul='178'.indexOf(ch)>=0;}
+  else if(/[a-z]/i.test(ch)){has='lmnr'.indexOf(ch.toLowerCase())>=0;rieul=ch.toLowerCase()==='l';}
+  var P={'을':['을','를'],'를':['을','를'],'이':['이','가'],'가':['이','가'],'은':['은','는'],'는':['은','는'],'과':['과','와'],'와':['과','와'],'으로':['으로','로'],'로':['으로','로']}[t];
+  if(t==='으로'||t==='로')return w+(has&&!rieul?'으로':'로');
+  return w+(has?P[0]:P[1]);
+}
 function dieIcon(f){return f==='invseed'?'🐛/🌾':FOODS[f].i;}
 function pwText(pw){if(!pw)return '능력 없음';if(pw.t==='draw')return '활성화할 때: 카드 1장 뽑기';if(pw.t==='egg')return '활성화할 때: 이 새에 알 1개';return '활성화할 때: '+FOODS[pw.f].i+' 1개 얻기';}
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
@@ -703,14 +713,14 @@ function handle(t){
   if(a==='cancel'){S.mode=null;S.sel=null;return render();}
   if(a==='hand'&&S.mode==='play'){
     var id=+t.dataset.k,card=S.hand.filter(function(c){return c.id===id;})[0];
-    if(!playable(card)){log(card.n+'은(는) 지금 낼 수 없습니다. '+whyNot(card));S.sel=null;return render();}
+    if(!playable(card)){log(jo(card.n,'은')+' 지금 낼 수 없습니다. '+whyNot(card));S.sel=null;return render();}
     S.sel=id;return render();
   }
   if(a==='place'&&S.mode==='play'){
     var hk=t.dataset.h,cd=S.hand.filter(function(c){return c.id===S.sel;})[0],col=S.mat[hk].length,ec=EGG_COST[col];
     cd.c.forEach(function(f){S.food[f]--;});payEggs(ec);
     S.mat[hk].push({c:cd,eggs:0});S.hand=S.hand.filter(function(c){return c.id!==cd.id;});
-    log(cd.n+'을(를) '+HAB[hk].n+' '+(col+1)+'번째 칸에 놓았습니다. 먹이 '+cd.c.map(function(f){return FOODS[f].i;}).join('')+(ec?', 알 '+ec+'개':'')+'를 냈습니다.');
+    log(jo(cd.n,'을')+' '+HAB[hk].n+' '+(col+1)+'번째 칸에 놓았습니다. 먹이('+cd.c.map(function(f){return FOODS[f].i;}).join('')+')'+(ec?'와 알 '+ec+'개':'')+'를 냈습니다.');
     S.mode=null;return endTurn();
   }
   if(a==='die'&&S.mode==='food'){
@@ -726,14 +736,14 @@ function handle(t){
     return render();
   }
   if(a==='finish'&&S.mode==='eggs')return finish();
-  if(a==='tray'&&S.mode==='cards'){var c=S.tray.splice(+t.dataset.k,1)[0];S.hand.push(c);log('진열대에서 '+c.n+'을(를) 가져왔습니다.');return afterCard();}
-  if(a==='deck'&&S.mode==='cards'){var d=draw1();S.hand.push(d);log('덱에서 '+d.n+'을(를) 뽑았습니다.');return afterCard();}
+  if(a==='tray'&&S.mode==='cards'){var c=S.tray.splice(+t.dataset.k,1)[0];S.hand.push(c);log('진열대에서 '+jo(c.n,'을')+' 가져왔습니다.');return afterCard();}
+  if(a==='deck'&&S.mode==='cards'){var d=draw1();S.hand.push(d);log('덱에서 '+jo(d.n,'을')+' 뽑았습니다.');return afterCard();}
 }
 document.getElementById('sim').addEventListener('keydown',function(e){
   if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute('role')==='button'){e.preventDefault();e.target.click();}
 });
 function takeFood(i,f){
-  S.feeder.splice(i,1);S.food[f]++;S.rem--;log('모이통에서 '+FOODS[f].i+' '+FOODS[f].n+'을(를) 가져왔습니다.');
+  S.feeder.splice(i,1);S.food[f]++;S.rem--;log('모이통에서 '+FOODS[f].i+' '+jo(FOODS[f].n,'을')+' 가져왔습니다.');
   if(S.rem===0)return finish();
   if(!S.feeder.length){S.feeder=roll(5);log('모이통이 비어 주사위 5개를 다시 굴렸습니다.');}
   render();
@@ -795,21 +805,21 @@ function aiDecide(){
     if(last&&eggRoom()>0)return startMove('grass','마지막 라운드예요. 이제는 새 카드를 모으기보다 점수를 챙길 때입니다. 알은 1개당 1점이니 초원에서 알을 낳습니다.');
     var tg=target();
     if(!tg)return startMove('wet','손에 놓을 만한 새가 없어요. 습지에서 카드를 뽑아 선택지를 늘립니다.');
-    if(tg.mf>0)return startMove('forest','다음에는 '+tg.card.n+'을(를) 내고 싶은데 먹이 '+foodList(tg.miss)+'가 부족해요. 숲에서 먹이를 얻습니다.');
-    if(tg.me>0&&eggRoom()>0)return startMove('grass','먹이는 있지만 '+tg.card.n+'을(를) 놓을 칸의 알 비용이 모자라요. 초원에서 알을 미리 낳아 둡니다.');
+    if(tg.mf>0)return startMove('forest','다음에는 '+jo(tg.card.n,'을')+' 내고 싶은데 먹이('+foodList(tg.miss)+')가 부족해요. 숲에서 먹이를 얻습니다.');
+    if(tg.me>0&&eggRoom()>0)return startMove('grass','먹이는 있지만 '+jo(tg.card.n,'을')+' 놓을 칸의 알 비용이 모자라요. 초원에서 알을 미리 낳아 둡니다.');
     return startMove('wet','지금 손의 카드로는 진행이 어려워요. 습지에서 다른 카드를 찾아봅니다.');
   }
   if(S.mode==='play'){
     var p=D.plan;
     if(!p||!S.hand.some(function(c){return c.id===p.card.id;})||!rowOk(p.card,p.h)){p=D.plan=bestPlay();}
     if(!p)return {o:{a:'cancel'},msg:'낼 수 있는 새가 없어 취소합니다.',rule:''};
-    if(S.sel===null)return {o:{a:'hand',k:p.card.id},msg:p.card.n+' 카드를 고릅니다. 필요한 먹이 '+foodList(p.card.c)+'를 갖고 있어요.',rule:'새는 카드에 표시된 서식지에만 놓을 수 있습니다.'};
+    if(S.sel===null)return {o:{a:'hand',k:p.card.id},msg:p.card.n+' 카드를 고릅니다. 필요한 먹이('+foodList(p.card.c)+')를 갖고 있어요.',rule:'새는 카드에 표시된 서식지에만 놓을 수 있습니다.'};
     return {o:{a:'place',h:p.h},msg:HAB[p.h].n+' '+(S.mat[p.h].length+1)+'번째 칸에 놓습니다.'+(p.ec?' 이 칸은 알 '+p.ec+'개를 내야 해요.':' 알 비용이 없는 칸이에요.')+(goalRow()===p.h?' 이번 라운드 목표가 '+HAB[p.h].n+'의 새 수라서 목표 점수에도 도움이 됩니다.':'')+(p.card.pw?' 갈색 능력이 있어 앞으로 '+HAB[p.h].n+'에서 행동할 때마다 덤을 줍니다.':''),rule:'새는 항상 그 줄의 가장 왼쪽 빈칸에 놓습니다. 2·3번째 칸은 알 1개, 4·5번째 칸은 알 2개가 듭니다.'};
   }
   if(S.mode==='food'){
     var t2=target(),need=t2?t2.miss:[];
     var useful=function(f){return f==='invseed'?(need.indexOf('inv')>=0||need.indexOf('seed')>=0):need.indexOf(f)>=0;};
-    if(S.pending!==null){var ch=need.indexOf('inv')>=0?'inv':'seed';return {o:{a:'dual',f:ch},msg:'이 주사위는 🐛 또는 🌾 중 하나를 고를 수 있어요. '+FOODS[ch].i+' '+FOODS[ch].n+'을(를) 고릅니다.',rule:'두 먹이가 그려진 면은 둘 중 하나를 골라 가져옵니다.'};}
+    if(S.pending!==null){var ch=need.indexOf('inv')>=0?'inv':'seed';return {o:{a:'dual',f:ch},msg:'이 주사위는 🐛 또는 🌾 중 하나를 고를 수 있어요. '+FOODS[ch].i+' '+jo(FOODS[ch].n,'을')+' 고릅니다.',rule:'두 먹이가 그려진 면은 둘 중 하나를 골라 가져옵니다.'};}
     var same=S.feeder.length>0&&S.feeder.every(function(f){return f===S.feeder[0];});
     if(same&&need.length&&!useful(S.feeder[0])&&D.rerolls<2){D.rerolls++;return {o:{a:'reroll'},msg:'모이통 주사위가 모두 '+dieIcon(S.feeder[0])+' 같은 면인데 필요한 먹이가 아니에요. 다시 굴립니다.',rule:'모이통에 남은 주사위가 모두 같은 면이면, 먹이를 가져가기 전에 주사위 5개를 모두 다시 굴릴 수 있습니다. 이것을 “모이통 초기화”라고 하며, 🐛/🌾 면은 독립된 한 면으로 셉니다.'};}
     var idx=-1,i,why;
@@ -833,7 +843,7 @@ function aiDecide(){
     var bt=-1,bvv=-99;
     S.tray.forEach(function(c,j){var v=c.p-missingFood(c).length*1.5+(c.pw?1.5:0);if(v>bvv){bvv=v;bt=j;}});
     var crule='카드는 앞면 진열대 3장 중에서 고르거나 조류 덱 맨 위에서 뽑습니다. 진열대는 차례가 끝날 때 다시 3장으로 채웁니다.';
-    if(bt>=0&&bvv>=1.5){var c=S.tray[bt];return {o:{a:'tray',k:bt},msg:'진열대의 '+c.n+'('+c.p+'점)을(를) 가져옵니다.'+(missingFood(c).length?'':' 지금 가진 먹이로 바로 낼 수 있는 카드예요.')+' (앞으로 '+S.rem+'장)',rule:crule};}
+    if(bt>=0&&bvv>=1.5){var c=S.tray[bt];return {o:{a:'tray',k:bt},msg:'진열대의 '+c.n+'('+c.p+'점)을 가져옵니다.'+(missingFood(c).length?'':' 지금 가진 먹이로 바로 낼 수 있는 카드예요.')+' (앞으로 '+S.rem+'장)',rule:crule};}
     return {o:{a:'deck'},msg:'진열대에 끌리는 카드가 없어 덱에서 뽑습니다. 무엇이 나올지 모르는 대신 새로운 가능성이 있어요. (앞으로 '+S.rem+'장)',rule:crule};
   }
   return null;
@@ -940,7 +950,7 @@ function vDecide(P){
     else if(c.pw&&c.pw.t.indexOf('pink')===0)why='분홍 능력이 있어서 상대 차례에도 이득을 볼 수 있어요.';
     else why='지금 가진 먹이로 낼 수 있는 새 중에서 가장 쓸모 있어 보여요.';
     if(GOAL_ROW[gi]===bp.h)why+=mine<theirs?' '+HAB[bp.h].n+'에 놓으면 라운드 목표에서 상대를 따라잡을 수 있어요.':' '+HAB[bp.h].n+'에 놓으면 라운드 목표 순위도 지킬 수 있어요.';
-    return {kind:'play',plan:bp,msg:c.n+'('+c.p+'점)을(를) '+HAB[bp.h].n+'에 놓겠습니다. '+why+(bp.ec?' 이 칸은 알 '+bp.ec+'개가 들어요.':''),rule:'새 놓기: 카드의 먹이를 내고, 놓을 칸 위에 적힌 만큼 알을 냅니다. 새는 그 줄의 가장 왼쪽 빈칸에 놓습니다.'};
+    return {kind:'play',plan:bp,msg:c.n+'('+c.p+'점)을 '+HAB[bp.h].n+'에 놓겠습니다. '+why+(bp.ec?' 이 칸은 알 '+bp.ec+'개가 들어요.':''),rule:'새 놓기: 카드의 먹이를 내고, 놓을 칸 위에 적힌 만큼 알을 냅니다. 새는 그 줄의 가장 왼쪽 빈칸에 놓습니다.'};
   }
   if(last&&pRoom(P)>0)return {kind:'grass',msg:'마지막 라운드예요. 새 카드를 모으기보다 알을 낳아 점수를 챙깁니다. 알은 1개당 1점이에요.'+rwNote(P,'grass'),rule:RULE.grass};
   if(gi===1&&mine<=theirs&&pBirds(P).some(function(b){return b.eggs===0;})&&V.cubes[P.i]<=3)
@@ -949,9 +959,9 @@ function vDecide(P){
   if(!tg)return {kind:'wet',msg:'손에 놓을 만한 새가 없어요. 습지에서 카드를 뽑아 선택지를 늘립니다.'+rwNote(P,'wet'),rule:RULE.wet};
   if(tg.miss.length){
     var has=tg.miss.some(function(t){return V.feeder.some(function(f){return f===t||(f==='invseed'&&(t==='inv'||t==='seed'));});});
-    return {kind:'forest',need:tg.miss,msg:tg.card.n+'을(를) 내고 싶은데 '+foodList(tg.miss)+'가 부족해요. 숲에서 먹이를 얻습니다.'+(has?' 마침 모이통에 필요한 먹이가 있어요.':' 모이통에 필요한 먹이는 없지만, 가져가다 보면 다시 굴릴 기회가 생길 수 있어요.')+rwNote(P,'forest'),rule:RULE.forest};
+    return {kind:'forest',need:tg.miss,msg:jo(tg.card.n,'을')+' 내고 싶은데 먹이('+foodList(tg.miss)+')가 부족해요. 숲에서 먹이를 얻습니다.'+(has?' 마침 모이통에 필요한 먹이가 있어요.':' 모이통에 필요한 먹이는 없지만, 가져가다 보면 다시 굴릴 기회가 생길 수 있어요.')+rwNote(P,'forest'),rule:RULE.forest};
   }
-  if(tg.me>0&&pRoom(P)>0)return {kind:'grass',msg:tg.card.n+'을(를) 놓을 칸의 알 비용이 모자라요. 초원에서 알을 낳아 둡니다.'+rwNote(P,'grass'),rule:RULE.grass};
+  if(tg.me>0&&pRoom(P)>0)return {kind:'grass',msg:jo(tg.card.n,'을')+' 놓을 칸의 알 비용이 모자라요. 초원에서 알을 낳아 둡니다.'+rwNote(P,'grass'),rule:RULE.grass};
   return {kind:'wet',msg:'지금 손의 카드로는 진행이 어려워 습지에서 다른 카드를 찾습니다.'+rwNote(P,'wet'),rule:RULE.wet};
 }
 function vBrown(P,h,out){
@@ -979,7 +989,7 @@ function vExec(P,d){
     c.c.forEach(function(f){P.food[f]--;});
     while(n>0){var bs=pBirds(P).filter(function(b){return b.eggs>0;}).sort(function(a,b){return b.eggs-a.eggs;});bs[0].eggs--;n--;}
     P.mat[h].push({c:c,eggs:0});P.hand=P.hand.filter(function(x){return x.id!==c.id;});
-    out.push(c.n+'을(를) '+HAB[h].n+' '+P.mat[h].length+'번째 칸에 놓았습니다. 먹이 '+foodList(c.c)+(ec?'와 알 '+ec+'개':'')+'를 냈어요.');
+    out.push(jo(c.n,'을')+' '+HAB[h].n+' '+P.mat[h].length+'번째 칸에 놓았습니다. 먹이('+foodList(c.c)+')'+(ec?'와 알 '+ec+'개':'')+'를 냈어요.');
     if(c.pw&&c.pw.t==='white'){P.hand.push(vDraw(),vDraw());out.push('↳ 놓을 때 능력 · '+c.n+': 놓는 순간 카드 2장을 뽑았습니다. 이 능력은 다시 발동하지 않아요.');}
     VD.hl={p:P.i,row:h,slot:P.mat[h].length-1};
   } else {
@@ -1001,7 +1011,7 @@ function vExec(P,d){
         P.food[t]++;got.push(FOODS[t].i);
         var ni=need.indexOf(t);if(ni>=0)need.splice(ni,1);
       }
-      out.push('모이통에서 '+got.join(' ')+'을(를) 가져왔습니다.');
+      out.push('모이통에서 먹이('+got.join(' ')+')를 가져왔습니다.');
       if(denied)out.push('필요한 먹이가 없어서, 상대가 노리는 먹이를 대신 가져갔어요. 모이통을 함께 쓰기 때문에 생기는 견제입니다.');
     }
     if(hk==='grass'){
@@ -1042,7 +1052,7 @@ function vRoundEnd(){
   V.round++;
   if(V.round>=4){V.over=true;vFinal();return;}
   V.cubes=[CUBES[V.round],CUBES[V.round]];V.tray=[vDraw(),vDraw(),vDraw()];V.first=1-V.first;V.turn=V.first;
-  VD.result=['개인판의 행동 큐브를 거두고, 진열대에 남은 카드를 버린 뒤 조류 덱에서 3장을 새로 펼쳤습니다. 모이통은 그대로 둡니다.','시작플레이어가 '+tag(V.players[V.first])+'(으)로 넘어갑니다. 이번 라운드는 각자 '+CUBES[V.round]+'번 행동해요.'];
+  VD.result=['개인판의 행동 큐브를 거두고, 진열대에 남은 카드를 버린 뒤 조류 덱에서 3장을 새로 펼쳤습니다. 모이통은 그대로 둡니다.','시작플레이어가 '+jo(tag(V.players[V.first]),'으로')+' 넘어갑니다. 이번 라운드는 각자 '+CUBES[V.round]+'번 행동해요.'];
 }
 function vFinal(){
   var A=V.players[0],B=V.players[1],sa=pScore(A),sb=pScore(B),win;
