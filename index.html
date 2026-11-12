@@ -567,16 +567,29 @@ function start(a){
   render();
 }
 function finish(){
-  var h=S.act,row=S.mat[h],fired=[];
-  S.mode=null;S.pending=null;
-  for(var i=row.length-1;i>=0;i--){
-    var b=row[i],pw=b.c.pw;if(!pw)continue;
-    if(pw.t==='draw'){S.hand.push(draw1());log('↳ '+b.c.n+' 능력 발동: 카드 1장을 뽑았습니다.');fired.push(i);}
-    else if(pw.t==='egg'){if(b.eggs<b.c.e){b.eggs++;log('↳ '+b.c.n+' 능력 발동: 알 1개를 낳았습니다.');}else log('↳ '+b.c.n+' 능력: 둥지가 가득 차 알을 낳지 못했습니다.');fired.push(i);}
-    else {S.food[pw.f]++;log('↳ '+b.c.n+' 능력 발동: '+FOODS[pw.f].i+' 1개를 얻었습니다.');fired.push(i);}
+  var h=S.act,row=S.mat[h];
+  S.mode=null;S.pending=null;S.chain=[];S.firedList=[];
+  for(var i=row.length-1;i>=0;i--)if(row[i].c.pw)S.chain.push(i);
+  runChain();
+}
+/* 갈색 능력을 오른쪽→왼쪽으로 차례대로 처리. 카드 뽑기 능력은 플레이어가 진열대/덱을 고를 때까지 멈춥니다 */
+function runChain(){
+  var h=S.act,row=S.mat[h];
+  while(S.chain.length){
+    var i=S.chain[0],b=row[i],pw=b.c.pw;
+    if(pw.t==='draw'){S.mode='pwdraw';return render();}
+    S.chain.shift();S.firedList.push(i);
+    if(pw.t==='egg'){if(b.eggs<b.c.e){b.eggs++;log('↳ '+b.c.n+' 능력 발동: 알 1개를 낳았습니다.');}else log('↳ '+b.c.n+' 능력: 둥지가 가득 차 알을 낳지 못했습니다.');}
+    else {S.food[pw.f]++;log('↳ '+b.c.n+' 능력 발동: '+FOODS[pw.f].i+' 1개를 얻었습니다.');}
   }
-  S.fired={h:h,idx:fired};
+  S.mode=null;S.fired={h:h,idx:S.firedList};S.chain=null;S.firedList=null;
   endTurn();
+}
+function pwDrawDone(card,from){
+  var i=S.chain.shift(),b=S.mat[S.act][i];
+  if(card){S.hand.push(card);S.firedList.push(i);log('↳ '+b.c.n+' 능력 발동: '+from+'에서 '+jo(card.n,'을')+' 가져왔습니다.');}
+  else log('↳ '+b.c.n+'의 능력은 쓰지 않고 넘어갑니다.');
+  S.mode=null;runChain();
 }
 function endTurn(){
   while(S.tray.length<3)S.tray.push(draw1());
@@ -628,6 +641,10 @@ function render(){
     btns='<button class="btn" data-a="finish">'+(eggRoom()===0?'둥지가 가득 차 마치기':'남은 알 버리고 마치기')+'</button>';
   }
   else if(S.mode==='cards')ins='진열대나 덱에서 카드를 '+S.rem+'장 더 가져오세요.';
+  else if(S.mode==='pwdraw'){
+    ins=S.mat[S.act][S.chain[0]].c.n+'의 갈색 능력: 진열대에서 고르거나 조류 덱에서 카드 1장을 가져오세요. 능력은 쓰지 않아도 됩니다.';
+    btns='<button class="btn" data-a="pwskip">능력 건너뛰기</button>';
+  }
   if(D.on){
     h+='<div class="demo"><div class="demo-top"><b>🤖 컴퓨터의 생각</b>'+
       '<button class="btn" data-a="demo-pause" '+(D.done?'disabled':'')+'>'+(D.paused?'▶ 계속':'⏸ 멈춤')+'</button>'+
@@ -668,8 +685,8 @@ function render(){
   if(!S.feeder.length)h+='<span style="color:var(--muted);font-size:14px">비어 있음. 다음에 먹이를 얻을 때 5개를 모두 굴립니다.</span>';
   h+='</div><div class="foodbar">'+FK.map(function(k){return '<span>'+FOODS[k].i+' '+S.food[k]+'</span>';}).join('')+'</div></div>';
   h+='<div class="zone"><h3>진열대</h3><div class="hand">';
-  S.tray.forEach(function(c,i){h+=cardHtml(c,S.mode==='cards','tray',i);});
-  h+='<button class="deckbtn" data-a="deck" '+(S.mode==='cards'?'':'disabled')+'>덱에서<br>1장 뽑기<br><small>'+S.deck.length+'장</small></button>';
+  S.tray.forEach(function(c,i){h+=cardHtml(c,S.mode==='cards'||S.mode==='pwdraw','tray',i);});
+  h+='<button class="deckbtn" data-a="deck" '+(S.mode==='cards'||S.mode==='pwdraw'?'':'disabled')+'>덱에서<br>1장 뽑기<br><small>'+S.deck.length+'장</small></button>';
   h+='</div></div></div>';
   h+='<div class="zone" style="margin-top:16px"><h3>내 손 ('+S.hand.length+'장)</h3><div class="hand">';
   if(!S.hand.length)h+='<span style="color:var(--muted);font-size:14px">손에 카드가 없습니다. 습지에서 카드를 뽑아 보세요.</span>';
@@ -739,6 +756,9 @@ function handle(t){
     return render();
   }
   if(a==='finish'&&S.mode==='eggs')return finish();
+  if(a==='tray'&&S.mode==='pwdraw'){var pc=S.tray.splice(+t.dataset.k,1)[0];return pwDrawDone(pc,'진열대');}
+  if(a==='deck'&&S.mode==='pwdraw')return pwDrawDone(draw1(),'조류 덱');
+  if(a==='pwskip'&&S.mode==='pwdraw')return pwDrawDone(null);
   if(a==='tray'&&S.mode==='cards'){var c=S.tray.splice(+t.dataset.k,1)[0];S.hand.push(c);log('진열대에서 '+jo(c.n,'을')+' 가져왔습니다.');return afterCard();}
   if(a==='deck'&&S.mode==='cards'){var d=draw1();S.hand.push(d);log('덱에서 '+jo(d.n,'을')+' 뽑았습니다.');return afterCard();}
 }
@@ -841,6 +861,13 @@ function aiDecide(){
     var bh=null,bi=-1,room=-1;
     HK.forEach(function(h){S.mat[h].forEach(function(b,j){var r=b.c.e-b.eggs;if(r>room){room=r;bh=h;bi=j;}});});
     return {o:{a:'egg',h:bh,i:bi},msg:S.mat[bh][bi].c.n+'에 알을 놓습니다. 둥지 여유가 가장 많은 새부터 채워요. (앞으로 '+S.rem+'개)',rule:'알은 원하는 새들에게 나눠 놓을 수 있고, 새 놓기의 알 비용으로 쓰이며, 게임 끝에 1개당 1점입니다.'};
+  }
+  if(S.mode==='pwdraw'){
+    var pb=S.mat[S.act][S.chain[0]],bt2=-1,bv2=-99;
+    S.tray.forEach(function(c,j){var v=c.p-missingFood(c).length*1.5+(c.pw?1.5:0);if(v>bv2){bv2=v;bt2=j;}});
+    var prule='갈색 능력은 원하지 않으면 건너뛸 수 있습니다. 능력으로 카드를 뽑을 때도 진열대에서 고르거나 조류 덱 맨 위에서 뽑을 수 있어요. 카드에 뽑는 곳이 따로 적혀 있으면 그대로 따릅니다.';
+    if(bt2>=0&&bv2>=1.5){var c3=S.tray[bt2];return {o:{a:'tray',k:bt2},msg:pb.c.n+'의 갈색 능력이 발동했어요. 진열대에서 '+jo(c3.n,'을')+' 고릅니다('+c3.p+'점'+(missingFood(c3).length?'':', 바로 낼 수 있는 카드')+').',rule:prule};}
+    return {o:{a:'deck'},msg:pb.c.n+'의 갈색 능력이 발동했어요. 진열대에 끌리는 카드가 없어 조류 덱에서 뽑습니다.',rule:prule};
   }
   if(S.mode==='cards'){
     var bt=-1,bvv=-99;
@@ -971,7 +998,11 @@ function vBrown(P,h,out){
   var row=P.mat[h];
   for(var i=row.length-1;i>=0;i--){
     var b=row[i],pw=b.c.pw;if(!isBrown(pw))continue;
-    if(pw.t==='draw'){P.hand.push(vDraw());out.push('↳ 갈색 능력 · '+b.c.n+': 카드 1장을 더 뽑았습니다.');}
+    if(pw.t==='draw'){
+      var vb=-1,vv=-99;V.tray.forEach(function(c,x){var v=cardVal(P,c)-pMiss(P,c).length*1.5;if(v>vv){vv=v;vb=x;}});
+      if(vb>=0&&vv>=1.5){var vc=V.tray.splice(vb,1)[0];P.hand.push(vc);out.push('↳ 갈색 능력 · '+b.c.n+': 진열대에서 '+jo(vc.n,'을')+' 골랐습니다.');}
+      else{P.hand.push(vDraw());out.push('↳ 갈색 능력 · '+b.c.n+': 진열대에 끌리는 카드가 없어 조류 덱에서 1장을 뽑았습니다.');}
+    }
     else if(pw.t==='egg'){if(b.eggs<b.c.e){b.eggs++;out.push('↳ 갈색 능력 · '+b.c.n+': 알 1개를 낳았습니다.');}else out.push('↳ 갈색 능력 · '+b.c.n+': 둥지가 가득 차 알을 낳지 못했어요.');}
     else {P.food[pw.f]++;out.push('↳ 갈색 능력 · '+b.c.n+': '+FOODS[pw.f].i+' 1개를 얻었습니다.');}
   }
