@@ -150,6 +150,7 @@ input[type=range]{width:100%;accent-color:var(--forest)}
 .slot.bird.can{cursor:pointer}
 .slot.bird b{font-family:"Gowun Batang",serif;font-size:15px}
 .slot.bird .meta{font-size:11px;color:var(--muted)}
+.slot.bird .spw{margin-top:4px;border-radius:5px;padding:3px 5px;font-size:11px;line-height:1.35;background:var(--brown-bg);color:var(--ink)}
 .eggline{display:flex;gap:3px;margin-top:auto;padding-top:4px;flex-wrap:wrap}
 .eggline i{width:11px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;border:1.5px solid var(--egg)}
 .eggline i.f{background:var(--egg)}
@@ -246,13 +247,15 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
 .pb-mat{display:grid;grid-template-columns:44px repeat(5,minmax(0,1fr));gap:4px;margin:10px 0}
 .pb-mat .lab{font-size:12px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--surface);font-weight:700}
 .pb-mat .lab.forest{background:var(--forest)} .pb-mat .lab.grass{background:var(--grass)} .pb-mat .lab.wet{background:var(--wet)}
-.ms{min-height:54px;border-radius:6px;border:1.5px dashed var(--line);font-size:11px;line-height:1.25;padding:3px 4px;display:flex;flex-direction:column;color:var(--muted);overflow:hidden}
+.ms{min-height:68px;border-radius:6px;border:1.5px dashed var(--line);font-size:11px;line-height:1.25;padding:3px 4px;display:flex;flex-direction:column;color:var(--muted);overflow:hidden}
 .ms.forest{background:var(--forest-bg)} .ms.grass{background:var(--grass-bg)} .ms.wet{background:var(--wet-bg)}
 .ms.b{background:var(--surface2);border:1px solid var(--line);border-left:4px solid var(--line);color:var(--ink)}
 .ms.b b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ms.b.pw-brown{border-left-color:var(--brown)} .ms.b.pw-pink{border-left-color:var(--pink)} .ms.b.pw-white{border-left-color:var(--muted)}
 .ms .eggline{gap:2px}
 .ms .eggline i{width:8px;height:10px;border-width:1px}
+.ms .vpw{display:block;margin-top:2px;border-radius:4px;padding:1px 3px;font-size:10px;line-height:1.25;color:var(--ink)}
+.ms .vpw.pw-brown{background:var(--brown-bg)} .ms .vpw.pw-pink{background:var(--pink-bg)} .ms .vpw.pw-white{background:var(--surface)}
 .rhl{box-shadow:0 0 0 2px var(--pink)}
 .pb-hand{display:flex;flex-wrap:wrap;gap:4px;font-size:12px}
 .pb-hand span{background:var(--surface2);border-radius:6px;padding:2px 7px}
@@ -648,7 +651,7 @@ function render(){
         var b=row[i],eggs='';for(var e=0;e<b.c.e;e++)eggs+='<i class="'+(e<b.eggs?'f':'')+'"></i>';
         var can=S.mode==='eggs'&&b.eggs<b.c.e&&S.rem>0;
         var fired=S.fired&&S.fired.h===hk&&S.fired.idx.indexOf(i)>=0;
-        h+='<div class="row-'+hk+' slot bird'+(can?' can':'')+(fired?' fired':'')+'" '+(can?'role="button" tabindex="0" data-a="egg" data-h="'+hk+'" data-i="'+i+'" aria-label="'+b.c.n+'에 알 놓기"':'')+'><b>'+b.c.n+'</b><span class="meta">'+b.c.p+'점'+(b.c.pw?' · 갈색 능력':'')+'</span><div class="eggline" aria-label="알 '+b.eggs+'/'+b.c.e+'">'+eggs+'</div></div>';
+        h+='<div class="row-'+hk+' slot bird'+(can?' can':'')+(fired?' fired':'')+'" '+(can?'role="button" tabindex="0" data-a="egg" data-h="'+hk+'" data-i="'+i+'" aria-label="'+b.c.n+'에 알 놓기"':'')+'><b>'+b.c.n+'</b><span class="meta">'+b.c.p+'점 · 알 '+b.eggs+'/'+b.c.e+'</span>'+(b.c.pw?'<div class="spw">'+pwText(b.c.pw)+'</div>':'')+'<div class="eggline" aria-label="알 '+b.eggs+'/'+b.c.e+'">'+eggs+'</div></div>';
       } else {
         var cur=i===len,canP=cur&&S.mode==='play'&&selCard&&rowOk(selCard,hk);
         h+='<div class="row-'+hk+' slot'+(cur?' cur':'')+(canP?' can':'')+'" '+(canP?'role="button" tabindex="0" data-a="place" data-h="'+hk+'" aria-label="'+H.n+'에 놓기"':'')+'>'+H.u+' '+H.rw[i]+'</div>';
@@ -1127,7 +1130,7 @@ function vRender(){
         var tgt=VD.hl&&VD.hl.p===P.i&&VD.hl.row===hk&&VD.hl.slot===i;
         var b=P.mat[hk][i];
         if(b){var eg='';for(var e=0;e<b.c.e;e++)eg+='<i class="'+(e<b.eggs?'f':'')+'"></i>';
-          h+='<div class="ms b '+pwClass(b.c.pw)+(rh?' rhl':'')+(tgt?' ai-target':'')+'" title="'+b.c.n+' · '+b.c.p+'점 · '+vpw(b.c.pw)+'"><b>'+b.c.n+'</b>'+b.c.p+'점<div class="eggline">'+eg+'</div></div>';}
+          h+='<div class="ms b '+pwClass(b.c.pw)+(rh?' rhl':'')+(tgt?' ai-target':'')+'" title="'+b.c.n+' · '+b.c.p+'점 · '+vpw(b.c.pw)+'"><b>'+b.c.n+'</b>'+b.c.p+'점'+(b.c.pw?'<span class="vpw '+pwClass(b.c.pw)+'">'+vShort(b.c.pw)+'</span>':'')+'<div class="eggline">'+eg+'</div></div>';}
         else h+='<div class="ms '+hk+(rh&&i===P.mat[hk].length?' rhl':'')+(tgt?' ai-target':'')+'">'+(i===P.mat[hk].length?HAB[hk].u+' '+HAB[hk].rw[i]:'')+'</div>';
       }
     });
@@ -1137,6 +1140,7 @@ function vRender(){
   h+='<div class="log">'+V.log.slice(0,60).map(function(m){return '<p>'+m+'</p>';}).join('')+'</div>';
   el.innerHTML=h;
 }
+function vShort(pw){if(pw.t==='draw')return '카드 +1';if(pw.t==='egg')return '알 +1';if(pw.t==='food')return FOODS[pw.f].i+' +1';if(pw.t==='pinkEgg')return '상대 알→알 +1';if(pw.t==='pinkFood')return '상대 먹이→🌾 +1';return '놓을 때 카드 +2';}
 function vpw(pw){if(!pw)return '능력 없음';if(pw.t==='pinkEgg')return '분홍: 상대가 알을 낳으면 이 새에 알 1개';if(pw.t==='pinkFood')return '분홍: 상대가 숲에서 먹이를 얻으면 🌾 1개';if(pw.t==='white')return '놓을 때: 카드 2장 뽑기';return '갈색 '+pwText(pw);}
 document.getElementById('vs').addEventListener('click',function(e){
   var t=e.target.closest('[data-v]');if(!t||t.disabled)return;
